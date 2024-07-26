@@ -2,8 +2,10 @@ package com.example.SpringJPA.service;
 
 import com.example.SpringJPA.dto.request.AuthenticationRequest;
 import com.example.SpringJPA.dto.request.LogoutRequest;
+import com.example.SpringJPA.dto.request.RefreshTokenRequest;
 import com.example.SpringJPA.dto.response.AuthenticationResponse;
 import com.example.SpringJPA.dto.response.IntrospectResponse;
+import com.example.SpringJPA.dto.response.RefreshTokenResponse;
 import com.example.SpringJPA.entity.InvalidatedToken;
 import com.example.SpringJPA.entity.User;
 import com.example.SpringJPA.exception.AppException;
@@ -94,6 +96,30 @@ public class AuthenticationService {
         invalidatedRepository.save(invalidatedToken);
     }
 
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) throws ParseException, JOSEException {
+        String token = request.getToken();
+
+        SignedJWT signedJWT = verifyToken(token);
+
+        String jti = signedJWT.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jti)
+                .expiryTime(expiryTime)
+                .build();
+
+        invalidatedRepository.save(invalidatedToken);
+
+        String username = signedJWT.getJWTClaimsSet().getSubject();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        String new_token = generateToken(user);
+
+        return RefreshTokenResponse.builder()
+                .token(new_token)
+                .build();
+    }
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
 

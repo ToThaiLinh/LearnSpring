@@ -1,11 +1,9 @@
 package com.example.SpringJPA.controller;
 
-import com.example.SpringJPA.dto.request.ApiResponse;
-import com.example.SpringJPA.dto.request.AuthenticationRequest;
-import com.example.SpringJPA.dto.request.IntrospectRequest;
-import com.example.SpringJPA.dto.request.LogoutRequest;
+import com.example.SpringJPA.dto.request.*;
 import com.example.SpringJPA.dto.response.AuthenticationResponse;
 import com.example.SpringJPA.dto.response.IntrospectResponse;
+import com.example.SpringJPA.dto.response.RefreshTokenResponse;
 import com.example.SpringJPA.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -45,6 +43,13 @@ public class AuthenticationController {
         authenticationService.logout(request);
         return ApiResponse.<String>builder()
                 .result("Logout success")
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest request) throws ParseException, JOSEException {
+        return ApiResponse.<RefreshTokenResponse>builder()
+                .result(authenticationService.refreshToken(request))
                 .build();
     }
 
