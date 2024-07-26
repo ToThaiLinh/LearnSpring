@@ -1,0 +1,16 @@
+#spring.application.name=SpringJPA
+server:
+  port: 8080
+  servlet:
+    context-path: /identity
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/Spring"
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+jwt:
+  signerKey: "EybNcJq0VGrjTqwq/gSUK/vK1vVjD+/qWUI+AXThh88WEe78NGz9Tyvv64jagvpQ"
