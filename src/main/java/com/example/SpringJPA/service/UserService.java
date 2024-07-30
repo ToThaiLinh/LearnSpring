@@ -3,6 +3,7 @@ package com.example.SpringJPA.service;
 import com.example.SpringJPA.dto.request.UserCreationRequest;
 import com.example.SpringJPA.dto.request.UserUpdateRequest;
 import com.example.SpringJPA.dto.response.UserResponse;
+import com.example.SpringJPA.entity.Role;
 import com.example.SpringJPA.entity.User;
 import com.example.SpringJPA.exception.AppException;
 import com.example.SpringJPA.exception.ErrorCode;
@@ -40,9 +41,9 @@ public class UserService {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var roles = roleRepository.findById("USER");
+        Role roles = roleRepository.findById("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
 
-        user.setRoles(new HashSet<>(Collections.singleton(roles.get())));
+        user.setRoles(new HashSet<>(Collections.singleton(roles)));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
