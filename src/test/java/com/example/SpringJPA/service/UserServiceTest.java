@@ -2,8 +2,10 @@ package com.example.SpringJPA.service;
 
 import com.example.SpringJPA.dto.request.UserCreationRequest;
 import com.example.SpringJPA.dto.response.UserResponse;
+import com.example.SpringJPA.entity.Role;
 import com.example.SpringJPA.entity.User;
 import com.example.SpringJPA.exception.AppException;
+import com.example.SpringJPA.repository.RoleRepository;
 import com.example.SpringJPA.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,10 +33,14 @@ public class UserServiceTest {
 
     @MockBean
     UserRepository userRepository;
+    @MockBean
+    private RoleRepository roleRepository;
     private UserCreationRequest request;
     private UserResponse userResponse;
     private User user;
+    private Role role;
     private LocalDate dob;
+
 
     @BeforeEach
     private void initData() {
@@ -64,22 +70,29 @@ public class UserServiceTest {
                 .roles(new HashSet<>())
                 .build();
 
+        role = Role.builder()
+                .name("USER")
+                .description("Role is defined")
+                .permissions(new HashSet<>())
+                .build();
+
     }
 
-//    @Test
-//    public void createUser_validRequest_success() {
-//        //GIVEN
-//        when(userRepository.existsByUsername(anyString())).thenReturn(false);
-//        when(userRepository.save(any())).thenReturn(user);
-//
-//        //WHEN
-//        var response = userService.createUser(request);
-//
-//        //THEN
-//        Assertions.assertThat(response.getId()).isEqualTo("f392a6fd2e2c");
-//        Assertions.assertThat(response.getUsername()).isEqualTo("linh");
-//
-//    }
+    @Test
+    public void createUser_validRequest_success() {
+        //GIVEN
+        when(userRepository.existsByUsername(anyString())).thenReturn(false);
+        when(roleRepository.findById(anyString())).thenReturn(Optional.of(role));
+        when(userRepository.save(any())).thenReturn(user);
+
+        //WHEN
+        var response = userService.createUser(request);
+
+        //THEN
+        Assertions.assertThat(response.getId()).isEqualTo("f392a6fd2e2c");
+        Assertions.assertThat(response.getUsername()).isEqualTo("linh");
+
+    }
     @Test
     public void createUser_userExisted_fail() {
         //GIVEN
