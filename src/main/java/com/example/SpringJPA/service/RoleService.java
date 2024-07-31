@@ -1,17 +1,19 @@
 package com.example.SpringJPA.service;
 
+import java.util.HashSet;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.example.SpringJPA.dto.request.RoleRequest;
 import com.example.SpringJPA.dto.response.RoleResponse;
 import com.example.SpringJPA.mapper.RoleMapper;
 import com.example.SpringJPA.repository.PermissionRepository;
 import com.example.SpringJPA.repository.RoleRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,6 @@ public class RoleService {
         role.setPermissions(new HashSet<>(permissions));
 
         return roleMapper.toRoleResponse(roleRepository.save(role));
-
     }
 
     public List<RoleResponse> getAll() {

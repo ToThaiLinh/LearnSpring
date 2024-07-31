@@ -1,22 +1,24 @@
 package com.example.SpringJPA.configuration;
 
-import com.example.SpringJPA.entity.Role;
-import com.example.SpringJPA.entity.User;
-import com.example.SpringJPA.repository.RoleRepository;
-import com.example.SpringJPA.repository.UserRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import com.example.SpringJPA.entity.Role;
+import com.example.SpringJPA.entity.User;
+import com.example.SpringJPA.repository.RoleRepository;
+import com.example.SpringJPA.repository.UserRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,14 +28,13 @@ public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
     UserRepository userRepository;
+
     @Bean
     @ConditionalOnProperty(
             prefix = "spring",
             value = "datasource.driverClassName",
-            havingValue = "com.mysql.cj.jdbc.Driver"
-    )
-    ApplicationRunner applicationRunner(UserRepository userRepository,
-                                        RoleRepository roleRepository) {
+            havingValue = "com.mysql.cj.jdbc.Driver")
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
             // Ensure the ADMIN role exists
             if (roleRepository.findById("ADMIN").isEmpty()) {
@@ -45,7 +46,7 @@ public class ApplicationInitConfig {
                 roleRepository.save(adminRole);
                 log.info("Admin role has been created");
             }
-            if( userRepository.findByUsername("admin").isEmpty()) {
+            if (userRepository.findByUsername("admin").isEmpty()) {
                 Optional<Role> roles = roleRepository.findById("ADMIN");
 
                 User user = User.builder()
@@ -57,7 +58,5 @@ public class ApplicationInitConfig {
                 log.warn("admin user has been created with default password: admin, please change it");
             }
         };
-
     }
-
 }

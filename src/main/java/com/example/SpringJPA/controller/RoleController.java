@@ -1,17 +1,18 @@
 package com.example.SpringJPA.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.example.SpringJPA.dto.request.ApiResponse;
 import com.example.SpringJPA.dto.request.RoleRequest;
 import com.example.SpringJPA.dto.response.RoleResponse;
-import com.example.SpringJPA.entity.Role;
 import com.example.SpringJPA.service.RoleService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/roles")
@@ -20,6 +21,7 @@ import java.util.List;
 @Slf4j
 public class RoleController {
     RoleService roleService;
+
     @PostMapping
     ApiResponse<RoleResponse> create(@RequestBody RoleRequest request) {
         return ApiResponse.<RoleResponse>builder()
@@ -44,8 +46,6 @@ public class RoleController {
     @DeleteMapping("/{role}")
     ApiResponse delete(@PathVariable("role") String role) {
         roleService.delete(role);
-        return ApiResponse.builder()
-                .result("Role has been deleted")
-                .build();
+        return ApiResponse.builder().result("Role has been deleted").build();
     }
 }

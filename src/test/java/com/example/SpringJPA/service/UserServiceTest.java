@@ -1,12 +1,14 @@
 package com.example.SpringJPA.service;
 
-import com.example.SpringJPA.dto.request.UserCreationRequest;
-import com.example.SpringJPA.dto.response.UserResponse;
-import com.example.SpringJPA.entity.Role;
-import com.example.SpringJPA.entity.User;
-import com.example.SpringJPA.exception.AppException;
-import com.example.SpringJPA.repository.RoleRepository;
-import com.example.SpringJPA.repository.UserRepository;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,14 +18,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import com.example.SpringJPA.dto.request.UserCreationRequest;
+import com.example.SpringJPA.dto.response.UserResponse;
+import com.example.SpringJPA.entity.Role;
+import com.example.SpringJPA.entity.User;
+import com.example.SpringJPA.exception.AppException;
+import com.example.SpringJPA.repository.RoleRepository;
+import com.example.SpringJPA.repository.UserRepository;
 
 @SpringBootTest
 @TestPropertySource("/test.properties")
@@ -33,14 +34,15 @@ public class UserServiceTest {
 
     @MockBean
     UserRepository userRepository;
+
     @MockBean
     private RoleRepository roleRepository;
+
     private UserCreationRequest request;
     private UserResponse userResponse;
     private User user;
     private Role role;
     private LocalDate dob;
-
 
     @BeforeEach
     private void initData() {
@@ -75,35 +77,33 @@ public class UserServiceTest {
                 .description("Role is defined")
                 .permissions(new HashSet<>())
                 .build();
-
     }
 
     @Test
     public void createUser_validRequest_success() {
-        //GIVEN
+        // GIVEN
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(roleRepository.findById(anyString())).thenReturn(Optional.of(role));
         when(userRepository.save(any())).thenReturn(user);
 
-        //WHEN
+        // WHEN
         var response = userService.createUser(request);
 
-        //THEN
+        // THEN
         Assertions.assertThat(response.getId()).isEqualTo("f392a6fd2e2c");
         Assertions.assertThat(response.getUsername()).isEqualTo("linh");
-
     }
+
     @Test
     public void createUser_userExisted_fail() {
-        //GIVEN
+        // GIVEN
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
-        //when(userRepository.save(any())).thenReturn(user);
+        // when(userRepository.save(any())).thenReturn(user);
 
-        //WHEN, THEN
+        // WHEN, THEN
         var exception = assertThrows(AppException.class, () -> userService.createUser(request));
 
-        Assertions.assertThat(exception.getErrorCode().getCode())
-                .isEqualTo(1002);
+        Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1002);
     }
 
     @Test
@@ -116,6 +116,7 @@ public class UserServiceTest {
         Assertions.assertThat(response.getUsername()).isEqualTo("linh");
         Assertions.assertThat(response.getId()).isEqualTo("f392a6fd2e2c");
     }
+
     @Test
     @WithMockUser(username = "linh")
     void getMyInfo_inValid_fail() {
@@ -124,6 +125,5 @@ public class UserServiceTest {
         var exception = assertThrows(AppException.class, () -> userService.getMyInfo());
 
         Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(1005);
-
     }
 }

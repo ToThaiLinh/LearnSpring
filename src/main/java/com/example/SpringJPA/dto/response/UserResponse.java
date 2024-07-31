@@ -1,11 +1,10 @@
 package com.example.SpringJPA.dto.response;
 
-import com.example.SpringJPA.entity.Role;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor

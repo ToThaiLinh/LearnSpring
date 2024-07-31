@@ -1,18 +1,16 @@
 package com.example.SpringJPA.validator;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
-
-import java.lang.annotation.*;
-
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import java.lang.annotation.*;
+
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+
 @Target({FIELD})
 @Retention(RUNTIME)
-@Constraint(
-        validatedBy = {DobValidator.class}
-)
+@Constraint(validatedBy = {DobValidator.class})
 public @interface DobConstraint {
     String message() default "Invalid date of birth";
 

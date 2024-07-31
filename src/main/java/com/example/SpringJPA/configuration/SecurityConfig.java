@@ -14,18 +14,13 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users",
-            "/auth/token",
-            "/auth/introspect",
-            "/auth/logout",
-            "auth/refresh"
+        "/users", "/auth/token", "/auth/introspect", "/auth/logout", "auth/refresh"
     };
 
     @Autowired
@@ -33,24 +28,28 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll() // Cho phép tất cả mọi truy cập
+        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                .permitAll() // Cho phép tất cả mọi truy cập
+                .anyRequest()
+                .authenticated()); // Mọi request khác đều phải xác thực
 
-                        .anyRequest().authenticated()); // Mọi request khác đều phải xác thực
+        //                request.anyRequest().permitAll());
 
-//                request.anyRequest().permitAll());
-
-        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwtConfigurer -> jwtConfigurer
+        httpSecurity.oauth2ResourceServer(
+                oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                                 .decoder(customJwtDecoder) // Phương thức xác thực
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())) // Chuyển đổi thành đối tượng xác thực để phân quyền
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // Xử lý lỗi nếu xác thực không thành công
-        );
+                                .jwtAuthenticationConverter(
+                                        jwtAuthenticationConverter())) // Chuyển đổi thành đối tượng xác thực để
+                        // phân quyền
+                        .authenticationEntryPoint(
+                                new JwtAuthenticationEntryPoint()) // Xử lý lỗi nếu xác thực không thành công
+                );
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
     }
+
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
@@ -62,10 +61,8 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
-
 }

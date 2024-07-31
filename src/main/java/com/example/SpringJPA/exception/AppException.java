@@ -1,6 +1,6 @@
 package com.example.SpringJPA.exception;
 
-public class AppException extends RuntimeException{
+public class AppException extends RuntimeException {
     public AppException(ErrorCode errorCode) {
         super();
         this.errorCode = errorCode;

@@ -1,16 +1,18 @@
 package com.example.SpringJPA.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.example.SpringJPA.dto.request.ApiResponse;
 import com.example.SpringJPA.dto.request.PermissionRequest;
 import com.example.SpringJPA.dto.response.PermissionResponse;
 import com.example.SpringJPA.service.PermissionService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/permissions")
@@ -37,8 +39,6 @@ public class PermissionController {
     @DeleteMapping("/{permission}")
     ApiResponse delete(@PathVariable("permission") String permission) {
         permissionService.delete(permission);
-        return ApiResponse.builder()
-                .result("Permission has been deleted")
-                .build();
+        return ApiResponse.builder().result("Permission has been deleted").build();
     }
 }
