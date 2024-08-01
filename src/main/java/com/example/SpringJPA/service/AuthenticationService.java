@@ -119,9 +119,9 @@ public class AuthenticationService {
         User user =
                 userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        String new_token = generateToken(user);
+        String newToken = generateToken(user);
 
-        return RefreshTokenResponse.builder().token(new_token).build();
+        return RefreshTokenResponse.builder().token(newToken).build();
     }
 
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
