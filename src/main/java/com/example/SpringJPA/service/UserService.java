@@ -36,22 +36,23 @@ public class UserService {
     RoleRepository roleRepository;
 
     public UserResponse createUser(UserCreationRequest request) {
-//
-//        if (userRepository.existsByUsername(request.getUsername())) {
-//            throw new AppException(ErrorCode.USER_EXISTED);
-//        }
+        //
+        //        if (userRepository.existsByUsername(request.getUsername())) {
+        //            throw new AppException(ErrorCode.USER_EXISTED);
+        //        }
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Role roles = roleRepository.findById("USER")
-                //.orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+        Role roles = roleRepository
+                .findById("USER")
+                // .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
                 .orElseGet(() -> {
                     Role userRole = Role.builder()
-                                    .name("USER")
-                                    .description("User role")
-                                    .permissions(new HashSet<>())
-                                    .build();
+                            .name("USER")
+                            .description("User role")
+                            .permissions(new HashSet<>())
+                            .build();
                     return roleRepository.save(userRole);
                 });
 
@@ -59,8 +60,7 @@ public class UserService {
 
         try {
             user = userRepository.save(user);
-        }
-        catch( DataIntegrityViolationException exception) {
+        } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         return userMapper.toUserResponse(user);
